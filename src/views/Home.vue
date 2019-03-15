@@ -18,6 +18,9 @@
           </v-card-actions>
         </v-card>
       </v-card>
+      <v-alert v-else type="error" :value="true">
+        You have no list.
+      </v-alert>
     </v-flex>
   </v-container>
 </template>
