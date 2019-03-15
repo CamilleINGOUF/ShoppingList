@@ -163,7 +163,6 @@ export default {
     shopList: {
       handler () {
         this.shopLists = this.shopLists.map(l => l.name === this.shopList.name ? this.shopList : l)
-        console.log(JSON.stringify(this.shopLists))
         window.localStorage.setItem('shopLists', JSON.stringify(this.shopLists))
       },
       deep: true

@@ -88,7 +88,7 @@ export default {
   }),
 
   mounted () {
-    this.lists = JSON.parse(window.localStorage.getItem('shopLists'))
+    this.lists = JSON.parse(window.localStorage.getItem('shopLists')) || []
   },
 
   methods: {
