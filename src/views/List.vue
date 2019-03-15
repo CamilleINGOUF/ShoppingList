@@ -2,7 +2,7 @@
     <v-container grid-list-xs>
         <v-card>
           <v-card-title primary-title>
-            <span class="title">My List - Total : {{ total }} €</span>
+            <span class="title">{{shopList.name}} - Total : {{ total }} €</span>
             <v-divider vertical class="px-5"></v-divider>
             <v-spacer></v-spacer>
             <v-layout xs4 row>
@@ -22,7 +22,7 @@
               <v-flex xs2 mr-2>
                 <v-text-field
                   label="Budget"
-                  v-model="budget"
+                  v-model="shopList.budget"
                   prefix="€"
                   type='number'
                 ></v-text-field>
@@ -84,11 +84,11 @@
 <script>
 export default {
   data: () => ({
+    shopLists: [],
+
     shopList: [],
 
     itemToAdd: '',
-
-    budget: 50,
 
     filterMode: 'all',
 
@@ -124,7 +124,7 @@ export default {
     addItem() {
       if(this.itemToAdd === '') 
         return;
-      this.shopList.push({
+      this.shopList.list.push({
         name: this.itemToAdd,
         price: 0,
         checked: false
@@ -134,12 +134,12 @@ export default {
     },
 
     deleteItem (index) {
-      this.shopList = this.shopList.filter(i => i.index !== index)
+      this.shopList.list = this.shopList.list.filter(i => i.index !== index)
       this.updateIndexes()
     },
 
     updateIndexes () {
-      this.shopList = this.shopList.map((o,i) => ({
+      this.shopList.list = this.shopList.list.map((o,i) => ({
         ...o,
         index: i
       }))
@@ -147,27 +147,33 @@ export default {
   },
 
   mounted() {
-    this.shopList = JSON.parse(window.localStorage.getItem('shopList')) || []
-    this.budget = JSON.parse(window.localStorage.getItem('budget')) || 50
+    const name = this.$route.params.name
+    this.shopLists = JSON.parse(window.localStorage.getItem('shopLists')) || []
+    const shopList = this.shopLists.find(l => l.name === name)
+    if(!shopList) {
+      this.shopList = {name: name, list: [], budget: 50}
+      this.shopLists.push(this.shopList)
+    } else {
+      this.shopList = shopList
+    }
     this.updateIndexes()
   },
 
   watch: {
     shopList: {
       handler () {
-        window.localStorage.setItem('shopList', JSON.stringify(this.shopList))
+        this.shopLists = this.shopLists.map(l => l.name === this.shopList.name ? this.shopList : l)
+        console.log(JSON.stringify(this.shopLists))
+        window.localStorage.setItem('shopLists', JSON.stringify(this.shopLists))
       },
       deep: true
-    },
-
-    budget () {
-      window.localStorage.setItem('budget', JSON.stringify(this.budget)) 
     }
   },
 
   computed: {
     total () {
-      return this.shopList.reduce((acc, cur) => cur.checked ? acc += Number(cur.price) : acc,0)
+      if(this.shopList.list)
+        return this.shopList.list.reduce((acc, cur) => cur.checked ? acc += Number(cur.price) : acc,0)
     },
 
     alert () {
@@ -176,10 +182,10 @@ export default {
 
     listFilter() {
       if(this.filterMode === 'notBought')
-        return this.shopList.filter(i => !i.checked)
+        return this.shopList.list.filter(i => !i.checked)
       else if(this.filterMode === 'bought')
-        return this.shopList.filter(i => i.checked)
-      return this.shopList
+        return this.shopList.list.filter(i => i.checked)
+      return this.shopList.list
     }
   }
 }

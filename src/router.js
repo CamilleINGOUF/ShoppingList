@@ -10,8 +10,9 @@ Vue.use(VueRouter)
 
 export default new VueRouter({
   routes: [
-    { path: '/', component: List },
+    { path: '/', component: Home },
     { path: '/lists', component: Lists },
-    { path: '/about', component: About }
+    { path: '/about', component: About },
+    { path: '/list/:name', component: List }
   ]
 })
