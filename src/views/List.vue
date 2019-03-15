@@ -2,7 +2,7 @@
     <v-container grid-list-xs>
         <v-card>
           <v-card-title primary-title>
-            <span class="title">My List - Total : {{ total }}</span>
+            <span class="title">My List - Total : {{ total }} €</span>
             <v-divider vertical class="px-5"></v-divider>
             <v-spacer></v-spacer>
             <v-layout xs4 row>
@@ -72,7 +72,7 @@
                   </v-flex>
                 </td>
                 <td class="justify-left px-0">
-                  <v-btn dark color="red accent-4" @click.stop="deleteItem(props.index)">DELETE <v-icon right>delete</v-icon></v-btn>
+                  <v-btn dark color="red accent-4" @click.stop="deleteItem(props.item.index)">DELETE <v-icon right>delete</v-icon></v-btn>
                 </td>
               <!-- </tr> -->
             </template>
@@ -89,6 +89,8 @@ export default {
     itemToAdd: '',
 
     budget: 50,
+
+    filterMode: 'all',
 
     headers: [{
         text: 'Bought',
@@ -128,16 +130,26 @@ export default {
         checked: false
       })
       this.itemToAdd = ''
+      this.updateIndexes()
     },
 
     deleteItem (index) {
-      this.shopList.splice(index, 1)
+      this.shopList = this.shopList.filter(i => i.index !== index)
+      this.updateIndexes()
+    },
+
+    updateIndexes () {
+      this.shopList = this.shopList.map((o,i) => ({
+        ...o,
+        index: i
+      }))
     }
   },
 
   mounted() {
     this.shopList = JSON.parse(window.localStorage.getItem('shopList')) || []
     this.budget = JSON.parse(window.localStorage.getItem('budget')) || 50
+    this.updateIndexes()
   },
 
   watch: {
@@ -163,9 +175,9 @@ export default {
     },
 
     listFilter() {
-      if(this.listFilter === 'notBought')
+      if(this.filterMode === 'notBought')
         return this.shopList.filter(i => !i.checked)
-      else if(this.listFilter === 'bought')
+      else if(this.filterMode === 'bought')
         return this.shopList.filter(i => i.checked)
       return this.shopList
     }
