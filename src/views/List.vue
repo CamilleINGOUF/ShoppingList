@@ -28,14 +28,31 @@
                 ></v-text-field>
               </v-flex>
               <v-flex xs5>
-                <v-combobox
+                <v-text-field
                   label="Item to add"
-                  :items="defaults"
                   v-model="itemToAdd"
                   @keyup.enter="addItem"
                   :append-icon="'add'"
                   @click:append="addItem"
-                ></v-combobox>
+                ></v-text-field>
+                <v-card v-if="filterDefaults.length !== 0" style="position: absolute; z-index: 10">
+                  <v-list>
+                    <v-list-tile
+                      v-for="(item, index) in filterDefaults"
+                      :key="index"
+                      avatar
+                      @click="itemToAdd = item"
+                    >
+                      <v-list-tile-content>
+                        <v-list-tile-title v-text="item"></v-list-tile-title>
+                      </v-list-tile-content>
+
+                      <v-list-tile-avatar>
+                        <img :src="item.avatar">
+                      </v-list-tile-avatar>
+                    </v-list-tile>
+                  </v-list>
+                </v-card>
               </v-flex>
             </v-layout>
           </v-card-title>
@@ -173,6 +190,7 @@ export default {
     total () {
       if(this.shopList.list)
         return this.shopList.list.reduce((acc, cur) => cur.checked ? acc += Number(cur.price) : acc,0)
+      return 0;
     },
 
     alert () {
@@ -185,6 +203,10 @@ export default {
       else if(this.filterMode === 'bought')
         return this.shopList.list.filter(i => i.checked)
       return this.shopList.list
+    },
+
+    filterDefaults () {
+      return this.defaults.filter(item => item.startsWith(this.itemToAdd) && this.itemToAdd !== '')
     }
   }
 }
