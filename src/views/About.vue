@@ -1,5 +1,5 @@
 <template>
-    <v-container grid-list-xs>
-        
-    </v-container>
+  <v-container>
+    <span>Une belle page about.</span>
+  </v-container>
 </template>
