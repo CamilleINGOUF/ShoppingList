@@ -134,14 +134,14 @@ export default {
     },
 
     deleteItem (index) {
-      this.shopList.list = this.shopList.list.filter(i => i.index !== index)
+      this.shopList.list = this.shopList.list.filter(item => item.index !== index)
       this.updateIndexes()
     },
 
     updateIndexes () {
-      this.shopList.list = this.shopList.list.map((o,i) => ({
-        ...o,
-        index: i
+      this.shopList.list = this.shopList.list.map((item,index) => ({
+        ...item,
+        index: index
       }))
     }
   },
@@ -162,7 +162,7 @@ export default {
   watch: {
     shopList: {
       handler () {
-        this.shopLists = this.shopLists.map(l => l.name === this.shopList.name ? this.shopList : l)
+        this.shopLists = this.shopLists.map(item => item.name === this.shopList.name ? this.shopList : item)
         window.localStorage.setItem('shopLists', JSON.stringify(this.shopLists))
       },
       deep: true
@@ -176,7 +176,7 @@ export default {
     },
 
     alert () {
-      return this.total > this.budget
+      return this.total > this.shopList.budget
     },
 
     listFilter() {
