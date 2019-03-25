@@ -101,9 +101,9 @@
 <script>
 export default {
   data: () => ({
-    shopLists: [],
+    shopLists: {},
 
-    shopList: [],
+    shopList: {},
 
     itemToAdd: '',
 
@@ -165,11 +165,11 @@ export default {
 
   mounted() {
     const name = this.$route.params.name
-    this.shopLists = JSON.parse(window.localStorage.getItem('shopLists')) || []
-    const shopList = this.shopLists.find(l => l.name === name)
+    this.shopLists = JSON.parse(window.localStorage.getItem('shopLists')) || {lists: [], lastUpdate: ''}
+    const shopList = this.shopLists.lists.find(l => l.name === name)
     if(!shopList) {
       this.shopList = {name: name, list: [], budget: 50}
-      this.shopLists.push(this.shopList)
+      this.shopLists.lists.push(this.shopList)
     } else {
       this.shopList = shopList
     }
@@ -179,7 +179,8 @@ export default {
   watch: {
     shopList: {
       handler () {
-        this.shopLists = this.shopLists.map(item => item.name === this.shopList.name ? this.shopList : item)
+        this.shopLists.lists = this.shopLists.lists.map(item => item.name === this.shopList.name ? this.shopList : item)
+        this.shopLists.lastUpdate = this.shopList.name
         window.localStorage.setItem('shopLists', JSON.stringify(this.shopLists))
       },
       deep: true

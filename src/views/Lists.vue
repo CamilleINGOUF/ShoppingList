@@ -39,7 +39,7 @@
       </v-card-title>
       <v-data-table
         :headers="headers"
-        :items="lists"
+        :items="shopLists.lists"
         class="elevation-1"
         hide-actions
       >
@@ -61,6 +61,8 @@
 export default {
   data: () => ({
     lists: [],
+
+    shopLists: {},
 
     headers: [{
       text: 'Name',
@@ -88,13 +90,13 @@ export default {
   }),
 
   mounted () {
-    this.lists = JSON.parse(window.localStorage.getItem('shopLists')) || []
+    this.shopLists = JSON.parse(window.localStorage.getItem('shopLists')) || {}
   },
 
   methods: {
     deleteList (name) {
-      this.lists = this.lists.filter(l => l.name !== name)
-      window.localStorage.setItem('shopLists',JSON.stringify(this.lists))
+      this.shopLists.lists = this.shopLists.lists.filter(l => l.name !== name)
+      window.localStorage.setItem('shopLists',JSON.stringify(this.shopLists))
     },
 
     cancel () {
@@ -107,7 +109,7 @@ export default {
       if(this.name === '' || this.lists.reduce((acc, cur) => cur.name === this.name ? true : acc,false))
         this.alert = true
       else {
-        this.$router.push('/list/'+this.name)
+        this.$router.push('/lists/'+this.name)
         this.cancel()
       }
     }

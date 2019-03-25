@@ -32,8 +32,8 @@ export default {
   }),
 
   mounted () {
-    const lists = JSON.parse(window.localStorage.getItem('shopLists')) || []
-    this.lastList = lists[lists.length - 1]
+    const shopLists = JSON.parse(window.localStorage.getItem('shopLists')) || []
+    this.lastList = shopLists.lists.find(list => list.name === shopLists.lastUpdate) || null
   }
 }
 </script>
