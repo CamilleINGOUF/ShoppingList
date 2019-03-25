@@ -20,20 +20,28 @@
       </v-card>
       <v-alert v-else type="error" :value="true">
         You have no list.
+        <create-lists-dialog :lists="shopLists.lists"/>
       </v-alert>
     </v-flex>
   </v-container>
 </template>
 
 <script>
+import CreateListsDialog from '@/components/CreateListsDialog'
 export default {
   data: () => ({
-    lastList : null
+    lastList : null,
+
+    shopLists: {}
   }),
 
   mounted () {
-    const shopLists = JSON.parse(window.localStorage.getItem('shopLists')) || []
-    this.lastList = shopLists.lists.find(list => list.name === shopLists.lastUpdate) || null
+    this.shopLists = JSON.parse(window.localStorage.getItem('shopLists')) || {}
+    this.lastList = this.shopLists.lists.find(list => list.name === this.shopLists.lastUpdate) || null
+  },
+
+  components: {
+    CreateListsDialog
   }
 }
 </script>
