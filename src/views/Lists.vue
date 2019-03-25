@@ -48,7 +48,7 @@
           <td class="text-xs-left">{{ props.item.list.length }}</td>
           <td class="text-xs-left">{{ props.item.budget }}</td>
           <td class="justify-left px-0">
-            <v-btn :to='"/list/"+props.item.name'>SEE</v-btn>
+            <v-btn :to='"/lists/"+props.item.name'>SEE</v-btn>
             <v-btn dark color="red darken-5" @click="deleteList(props.item.name)">DELETE</v-btn>
           </td>
         </template>

@@ -14,7 +14,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn :to='"/list/"+lastList.name' color="green darken-4" dark>SEE</v-btn>  
+            <v-btn :to='"/lists/"+lastList.name' color="green darken-4" dark>SEE</v-btn>  
           </v-card-actions>
         </v-card>
       </v-card>

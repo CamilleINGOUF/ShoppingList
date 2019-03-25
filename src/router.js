@@ -13,6 +13,6 @@ export default new VueRouter({
     { path: '/', component: Home },
     { path: '/lists', component: Lists },
     { path: '/about', component: About },
-    { path: '/list/:name', component: List }
+    { path: '/lists/:name', component: List }
   ]
 })
