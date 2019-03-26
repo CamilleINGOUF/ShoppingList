@@ -22,10 +22,10 @@
               <v-flex xs2 mr-2>
                 <v-text-field
                   label="Budget"
-                  v-model="shopList.budget"
+                  :value="shopList.budget"
                   prefix="€"
                   type='number'
-                  @change="modifyBudget"
+                  @input="modifyBudget"
                 ></v-text-field>
               </v-flex>
               <v-flex xs5>
@@ -114,6 +114,8 @@ export default {
   data: () => ({
     itemToAdd: '',
 
+    budget: 50,
+
     filterMode: 'all',
 
     error: false,
@@ -171,8 +173,8 @@ export default {
       this.$store.dispatch('deleteItemInList', {listName: this.shopList.name, itemName})
     },
 
-    modifyBudget () {
-      
+    modifyBudget (val) {
+      this.$store.dispatch('modifyList', { shopList : {...this.shopList, budget: val}})
     }
   },
 
