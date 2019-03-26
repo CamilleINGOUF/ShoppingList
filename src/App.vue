@@ -20,8 +20,9 @@
 export default {
   name: 'App',
 
-  mounted () {
+  created () {
     this.$store.commit('fetchShopsLists')
+    this.$store.commit('saveShopsLists')
   }
 }
 </script>

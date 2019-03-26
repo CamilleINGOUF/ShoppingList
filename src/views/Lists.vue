@@ -31,7 +31,7 @@
 import CreateListsDialog from '@/components/CreateListsDialog'
 export default {
   data: () => ({
-    shopLists: {},
+    // shopLists: {},
 
     headers: [{
       text: 'Name',
@@ -58,14 +58,15 @@ export default {
     alert: false
   }),
 
-  mounted () {
-    this.shopLists = JSON.parse(window.localStorage.getItem('shopLists')) || {}
-  },
-
   methods: {
     deleteList (name) {
-      this.shopLists.lists = this.shopLists.lists.filter(l => l.name !== name)
-      window.localStorage.setItem('shopLists',JSON.stringify(this.shopLists))
+      this.$store.dispatch('deleteList', {name})
+    }
+  },
+
+  computed: {
+    shopLists () {
+      return this.$store.getters.shopLists
     }
   },
 

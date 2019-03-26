@@ -12,7 +12,7 @@
                 :value="alert"
                 type="error"
             >
-                Name already taken or empty.
+                {{message}}
             </v-alert>
             <v-card-text>
                 <v-container grid-list-md>
@@ -34,14 +34,12 @@
 
 <script>
 export default {
-    props: {
-        lists: Array
-    },
-
     data: () => ({
         dialog: false,
         
         alert: false,
+
+        message: '',
 
         name: ''
     }),
@@ -54,9 +52,13 @@ export default {
             },
 
         save () {
-            if(this.name === '' || this.lists.reduce((acc, cur) => cur.name === this.name ? true : acc,false))
+            if(this.name === '') {
                 this.alert = true
-            else {
+                this.message = "Champ requis"
+            } else if(this.$store.getters.listExists(this.name)) {
+                this.alert = true
+                this.message = "Liste déjà existante"
+            } else {
                 this.$router.push('/lists/'+this.name)
                 this.cancel()
             }

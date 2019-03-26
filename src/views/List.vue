@@ -25,6 +25,7 @@
                   v-model="shopList.budget"
                   prefix="€"
                   type='number'
+                  @change="modifyBudget"
                 ></v-text-field>
               </v-flex>
               <v-flex xs5>
@@ -35,6 +36,14 @@
                   :append-icon="'add'"
                   @click:append="addItem"
                 ></v-text-field>
+                
+                <v-alert
+                  :value="error"
+                  type="error"
+                  dismissible
+                >
+                  {{messageError}}
+                </v-alert>
                 <v-card v-if="filterDefaults.length !== 0" style="position: absolute; z-index: 10">
                   <v-list>
                     <v-list-tile
@@ -74,6 +83,7 @@
                   <v-checkbox
                     v-model="props.item.checked"
                     hide-details
+                    @change="modifyItem(props.item)"
                   ></v-checkbox>
                 </td>
                 <td class="text-xs-left">{{ props.item.name }}</td>
@@ -85,11 +95,12 @@
                       v-model="props.item.price"
                       hide-details
                       type='number'
+                      @change="modifyItem(props.item)"
                     ></v-text-field>
                   </v-flex>
                 </td>
                 <td class="justify-left px-0">
-                  <v-btn dark color="red accent-4" @click.stop="deleteItem(props.item.index)">DELETE <v-icon right>delete</v-icon></v-btn>
+                  <v-btn dark color="red accent-4" @click.stop="deleteItem(props.item.name)">DELETE <v-icon right>delete</v-icon></v-btn>
                 </td>
               <!-- </tr> -->
             </template>
@@ -101,13 +112,13 @@
 <script>
 export default {
   data: () => ({
-    shopLists: {},
-
-    shopList: {},
-
     itemToAdd: '',
 
     filterMode: 'all',
+
+    error: false,
+
+    messageError : '',
 
     headers: [{
         text: 'Bought',
@@ -139,55 +150,43 @@ export default {
 
   methods: {
     addItem() {
-      if(this.itemToAdd === '') 
-        return;
-      this.shopList.list.push({
-        name: this.itemToAdd,
-        price: 0,
-        checked: false
-      })
-      this.itemToAdd = ''
-      this.updateIndexes()
+      if(this.itemToAdd === '') {
+        this.error = true
+        this.messageError = 'Champ requis'
+      } else if (this.$store.getters.itemExistsInList(this.shopList.name, this.itemToAdd)) {
+        this.error = true
+        this.messageError = 'Item déjà dans la liste'
+      } else {
+        this.$store.dispatch('addItemInList', {listName: this.shopList.name, itemName: this.itemToAdd})
+        this.itemToAdd = ''
+        this.error = false
+      }
     },
 
-    deleteItem (index) {
-      this.shopList.list = this.shopList.list.filter(item => item.index !== index)
-      this.updateIndexes()
+    modifyItem (item) {
+      this.$store.dispatch('modidyItemInList', {listName: this.shopList.name, itemName: item.name, item})
     },
 
-    updateIndexes () {
-      this.shopList.list = this.shopList.list.map((item,index) => ({
-        ...item,
-        index: index
-      }))
+    deleteItem (itemName) {
+      this.$store.dispatch('deleteItemInList', {listName: this.shopList.name, itemName})
+    },
+
+    modifyBudget () {
+      
     }
   },
 
   mounted() {
-    const name = this.$route.params.name
-    this.shopLists = JSON.parse(window.localStorage.getItem('shopLists')) || {lists: [], lastUpdate: ''}
-    const shopList = this.shopLists.lists.find(l => l.name === name)
-    if(!shopList) {
-      this.shopList = {name: name, list: [], budget: 50}
-      this.shopLists.lists.push(this.shopList)
-    } else {
-      this.shopList = shopList
-    }
-    this.updateIndexes()
-  },
-
-  watch: {
-    shopList: {
-      handler () {
-        this.shopLists.lists = this.shopLists.lists.map(item => item.name === this.shopList.name ? this.shopList : item)
-        this.shopLists.lastUpdate = this.shopList.name
-        window.localStorage.setItem('shopLists', JSON.stringify(this.shopLists))
-      },
-      deep: true
+    if(!this.$store.getters.listExists(this.$route.params.name)) {
+      this.$store.dispatch('addList', {name: this.$route.params.name})
     }
   },
 
   computed: {
+    shopList () {
+      return this.$store.getters.shopListByName(this.$route.params.name)
+    },
+
     total () {
       if(this.shopList.list)
         return this.shopList.list.reduce((acc, cur) => cur.checked ? acc += Number(cur.price) : acc,0)
