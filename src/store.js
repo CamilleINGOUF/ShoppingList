@@ -5,11 +5,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    count: 0
+    shopLists: {}
   },
   mutations: {
-    increment (state) {
-      state.count++
+    fetchShopsLists (state) {
+      state.shopLists = JSON.parse(window.localStorage.getItem('shopLists')) || {}
     }
   }
 })
